@@ -10,6 +10,8 @@
   },
   "private": true,
   "dependencies": {
+    "@100mslive/hms-video": "^0.1.47",
+    "@100mslive/hms-video-store": "^0.2.93",
     "@angular/animations": "~13.3.0",
     "@angular/common": "~13.3.0",
     "@angular/compiler": "~13.3.0",
