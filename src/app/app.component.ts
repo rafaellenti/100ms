@@ -7,7 +7,6 @@ import * as hmsAll from '@100mslive/hms-video-store';
 import { Observable } from 'rxjs';
 
 import { IConfig } from './config.model';
-import { AnySoaRecord } from 'dns';
 
 const hms = new HMSReactiveStore();
 
@@ -35,6 +34,7 @@ export class AppComponent {
   hmsStore!: hmsAll.HMSStore;
   allow!: Observable<boolean>;
   componente: any = AppComponent.prototype;
+  messageList: Array<any> = [];
 
 
   public join() {
@@ -43,6 +43,7 @@ export class AppComponent {
       userName: 'teste1',
       authToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2Nlc3Nfa2V5IjoiNjIyYjljZDk0NGFlMDRiNTFjYWZmZjcwIiwicm9vbV9pZCI6IjYyMzIxNWYzZjA5N2MxNWI5YzdjNjIyOSIsInVzZXJfaWQiOiI2MjJiOWNkOTQ0YWUwNGI1MWNhZmZmNmQiLCJyb2xlIjoiZ3Vlc3QiLCJqdGkiOiI0MGI4Nzk5NC1hN2Y4LTQxNmUtYTM2NS1mZTZkNmRlYjNlMDUiLCJ0eXBlIjoiYXBwIiwidmVyc2lvbiI6MiwiZXhwIjoxNjQ3OTU2ODA5fQ.QsHpmE-F44viEgpgpus8wGpRvgv9REwD_fvPR-NV88I'
     });
+    AppComponent.prototype.messageList = [];
   }
 
   public leave() {
@@ -65,6 +66,7 @@ export class AppComponent {
     if (connected) {
       AppComponent.prototype.peersList = [];
       hmsStore.subscribe(AppComponent.prototype.renderPeers, selectPeers);
+      hmsStore.subscribe(AppComponent.prototype.renderMessages, hmsAll.selectHMSMessages);
     }
   }
 
@@ -99,7 +101,13 @@ export class AppComponent {
     }
   }
 
-  public sendMessage() {
+  private renderMessages(messages: any) {
+    console.log('messages - ', messages);
+    AppComponent.prototype.messageList.push(messages);
+    console.log(AppComponent.prototype.messageList);
+  }
+
+  public sendMessage()  {
     hmsActions.sendBroadcastMessage('hello everyone!');
   }
 }
