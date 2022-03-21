@@ -1,6 +1,5 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
 
-
 import { HMSReactiveStore, HMSStore, selectPeers, selectIsConnectedToRoom } from '@100mslive/hms-video-store';
 
 import * as hmsAll from '@100mslive/hms-video-store';
@@ -8,13 +7,13 @@ import * as hmsAll from '@100mslive/hms-video-store';
 import { Observable } from 'rxjs';
 
 import { IConfig } from './config.model';
+import { AnySoaRecord } from 'dns';
 
 const hms = new HMSReactiveStore();
 
 const hmsStore = hms.getStore();
 
 const hmsActions = hms.getActions();
-
 
 
 @Component({
@@ -27,18 +26,15 @@ export class AppComponent {
 
   peerStore!: HMSStore;
 
-
-
   @Input()
   public name!: string;
 
   @Input() public authToken = 'any';
 
   peersList: Array<any> = [];
-  hmsStore!: HMSStore;
+  hmsStore!: hmsAll.HMSStore;
   allow!: Observable<boolean>;
   componente: any = AppComponent.prototype;
-
 
 
   public join() {
@@ -64,8 +60,6 @@ export class AppComponent {
 
     this.renderPeers(AppComponent.prototype.peersList);
   }
-
-
 
   private onRoomStateChange(connected: boolean | undefined) {
     if (connected) {
@@ -103,5 +97,9 @@ export class AppComponent {
         }
       }
     }
+  }
+
+  public sendMessage() {
+    hmsActions.sendBroadcastMessage('hello everyone!');
   }
 }
