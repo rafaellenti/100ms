@@ -45,7 +45,7 @@ export class AppComponent {
     hmsStore.subscribe(this.onRoomStateChange, selectIsConnectedToRoom);
     hmsActions.join({
       userName: 'teste1',
-      authToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2Nlc3Nfa2V5IjoiNjIyYjljZDk0NGFlMDRiNTFjYWZmZjcwIiwicm9vbV9pZCI6IjYyMzIxNWYzZjA5N2MxNWI5YzdjNjIyOSIsInVzZXJfaWQiOiI2MjJiOWNkOTQ0YWUwNGI1MWNhZmZmNmQiLCJyb2xlIjoiZ3Vlc3QiLCJqdGkiOiI3MTkxYmY3Zi1hYWExLTQxNmUtYjA0NS1kNTAwMTg3NjVjNzIiLCJ0eXBlIjoiYXBwIiwidmVyc2lvbiI6MiwiZXhwIjoxNjQ3NzAwMDk5fQ.MrPCo1jLcHBJoRZrH3jZAlWeJxHaPLq0YgUPnDv-BlM'
+      authToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2Nlc3Nfa2V5IjoiNjIyYjljZDk0NGFlMDRiNTFjYWZmZjcwIiwicm9vbV9pZCI6IjYyMzIxNWYzZjA5N2MxNWI5YzdjNjIyOSIsInVzZXJfaWQiOiI2MjJiOWNkOTQ0YWUwNGI1MWNhZmZmNmQiLCJyb2xlIjoiZ3Vlc3QiLCJqdGkiOiI0MGI4Nzk5NC1hN2Y4LTQxNmUtYTM2NS1mZTZkNmRlYjNlMDUiLCJ0eXBlIjoiYXBwIiwidmVyc2lvbiI6MiwiZXhwIjoxNjQ3OTU2ODA5fQ.QsHpmE-F44viEgpgpus8wGpRvgv9REwD_fvPR-NV88I'
     });
   }
 
