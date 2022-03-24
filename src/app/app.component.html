@@ -1,46 +1,51 @@
 <form id="join">
-  <h2>Join Room</h2>
-  <div class="input-container">
-    <input id="name" type="text" name="username" placeholder="Your name" />
-  </div>
-  <div class="input-container">
-    <input id="token" type="text" name="token" placeholder="Auth token" />
-  </div>
-  <button (click)="join()" type="button" class="btn-primary" id="join-btn">Join</button>
-  <button (click)="leave()" type="button" class="btn-primary" id="join-btn">Leave</button>
-  <button (click)="localPeerConfig({video: true})" type="button" class="btn-primary" id="join-btn">Toggle video</button>
-  <button (click)="localPeerConfig({audio: true})" type="button" class="btn-primary" id="join-btn">Toggle Audio</button>
-  <button (click)="localPeerConfig({screen: true})" type="button" class="btn-primary" id="join-btn">Toggle
-    Screen</button>
-  <button (click)="sendMessage()" type="button" class="btn-primary" id="join-btn">Send Message</button>
+    <h2>Join Room</h2>
+    <div class="input-container">
+        <input id="name" [value]="name" type="text" name="username" placeholder="Your name" />      
+    </div>
+    <div class="input-container">
+        <input id="token" type="text" name="token" placeholder="Auth token" />
+    </div>
+    <button (click)="join()" type="button" class="btn-primary" id="join-btn">Join</button>
+    <button (click)="leave()" type="button" class="btn-primary" id="join-btn">Leave</button>
+    <button (click)="localPeerConfig({video: true})" type="button" class="btn-primary" id="join-btn">Toggle
+        video</button>
+    <button (click)="localPeerConfig({audio: true})" type="button" class="btn-primary" id="join-btn">Toggle
+        Audio</button>
+    <button (click)="localPeerConfig({screen: true})" type="button" class="btn-primary" id="join-btn">Toggle
+        Screen</button>
+    <button (click)="sendMessage(0)" type="button" class="btn-primary" id="join-btn">Send Message</button>
+    <button (click)="toggleVB()" type="button" class="btn-primary" id="join-btn">ToggleVB</button>
+    <button (click)="start()" type="button" class="btn-primary" id="join-btn">Start recording</button>
+    <button (click)="stop()" type="button" class="btn-primary" id="join-btn">stop recording</button>
 </form>
 
-<div id="conference" class="conference-section">
-  <div id="peers-container" style="display: flex; flex-direction: column">
-    <ng-container *ngFor="let item of componente.peersList">
-      <video style="max-width: 30%;" autoPlay muted playsInline class="peer-video"></video>
-      <span>{{item.name}}</span>
-      <ng-container *ngFor="let i of item.auxiliaryTracks">
-        <div *ngIf="!item.isLocal">
-          <video style="max-width: 30%;" autoPlay muted playsInline class="screen-share"></video>
-          <span>Screen share de {{item.name}}</span>
+<div style="display: flex">
+    <div id="conference" class="conference-section">
+        <div id="peers-container" style="display: flex; flex-direction: column">
+            <ng-container *ngFor="let item of componente.peersList">
+                <video style="max-width: 30%;" autoPlay muted playsInline class="peer-video"></video>
+                <span>{{item.name}}</span>             
+                <ng-container *ngFor="let i of item.auxiliaryTracks">
+                    <div *ngIf="!item.isLocal">
+                        <video style="max-width: 30%;" autoPlay muted playsInline class="screen-share"></video>
+                        <span>Screen share de {{item.name}}</span>
+                    </div>
+                    <div *ngIf="item.isLocal">
+                        <h1>Você está compartilhando sua tela</h1>
+                    </div>
+                </ng-container>
+            </ng-container>
         </div>
-        <div *ngIf="item.isLocal">
-          <h1>Você está compartilhando sua tela</h1>
-        </div>
-      </ng-container>
-    </ng-container>
-  </div>
-</div>
+    </div>
 
-<div id="nick-chat">
-  <div *ngFor="let item of messageList" style="display: flex; width: 100%;justify-content: space-around;">
-    <div>
-      <p>Nome:</p>
-      <p>{{item.senderName}}</p>
+    <div id="nick-chat">
+        <div *ngFor="let item of componente.messageList"
+            style="display: flex; width: 100%;justify-content: space-around;">
+            <div>
+                <p (click)="sendMessage(2, item.sender, item.senderName)">Nome: {{item.senderName}}</p>
+                <p style="margin-top: 1rem;">{{item.message}}</p>
+            </div>
+        </div>
     </div>
-    <div>
-      {{item.message}}
-    </div>
-  </div>
 </div>

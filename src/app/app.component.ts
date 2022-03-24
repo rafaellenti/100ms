@@ -1,17 +1,12 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
-
 import { HMSReactiveStore, HMSStore, selectPeers, selectIsConnectedToRoom } from '@100mslive/hms-video-store';
-
+import { HMSVirtualBackgroundPlugin } from '@100mslive/hms-virtual-background';
 import * as hmsAll from '@100mslive/hms-video-store';
-
 import { Observable } from 'rxjs';
-
 import { IConfig } from './config.model';
 
 const hms = new HMSReactiveStore();
-
 const hmsStore = hms.getStore();
-
 const hmsActions = hms.getActions();
 
 
@@ -22,7 +17,6 @@ const hmsActions = hms.getActions();
 })
 
 export class AppComponent {
-
   peerStore!: HMSStore;
 
   @Input()
@@ -35,13 +29,14 @@ export class AppComponent {
   allow!: Observable<boolean>;
   componente: any = AppComponent.prototype;
   messageList: Array<any> = [];
+  virtualBackground = new HMSVirtualBackgroundPlugin('blur');
 
 
   public join() {
     hmsStore.subscribe(this.onRoomStateChange, selectIsConnectedToRoom);
     hmsActions.join({
-      userName: 'teste1',
-      authToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2Nlc3Nfa2V5IjoiNjIyYjljZDk0NGFlMDRiNTFjYWZmZjcwIiwicm9vbV9pZCI6IjYyMzIxNWYzZjA5N2MxNWI5YzdjNjIyOSIsInVzZXJfaWQiOiI2MjJiOWNkOTQ0YWUwNGI1MWNhZmZmNmQiLCJyb2xlIjoiZ3Vlc3QiLCJqdGkiOiI0MGI4Nzk5NC1hN2Y4LTQxNmUtYTM2NS1mZTZkNmRlYjNlMDUiLCJ0eXBlIjoiYXBwIiwidmVyc2lvbiI6MiwiZXhwIjoxNjQ3OTU2ODA5fQ.QsHpmE-F44viEgpgpus8wGpRvgv9REwD_fvPR-NV88I'
+      userName: 'Guest',
+      authToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2Nlc3Nfa2V5IjoiNjIyYjljZDk0NGFlMDRiNTFjYWZmZjcwIiwicm9vbV9pZCI6IjYyMzhjM2VhNDRhZTA0YjUxY2IwNTI2NSIsInVzZXJfaWQiOiI2MjJiOWNkOTQ0YWUwNGI1MWNhZmZmNmQiLCJyb2xlIjoiZ3Vlc3QiLCJqdGkiOiI1ZTk0ZTNlNC0yNTEyLTRiNTItOTU0Zi01OWQzYTMyN2U0MDgiLCJ0eXBlIjoiYXBwIiwidmVyc2lvbiI6MiwiZXhwIjoxNjQ4MDUzNzQ4fQ.WK_DUl7J-mFdu9zi1pnwqlDZtsbH3xqKmd7X1LVlg6E'
     });
     AppComponent.prototype.messageList = [];
   }
@@ -81,7 +76,6 @@ export class AppComponent {
 
   private async renderPeers(peers: any) {
     AppComponent.prototype.peersList = peers;
-    console.log("🚀 ~ file: app.component.ts ~ line 88 ~ AppComponent ~ renderPeers ~ peers", peers)
     await AppComponent.prototype.delay(10);
     for (const [i, v] of peers.entries()) {
       if (v.videoTrack) {
@@ -91,8 +85,7 @@ export class AppComponent {
       }
       for (const [l, p] of v.auxiliaryTracks.entries()) {
         const track = hmsStore.getState(hmsAll.selectTrackByID(p));
-        console.log("🚀 ~ file: app.component.ts ~ line 98 ~ AppComponent ~ renderPeers ~ track", track);
-        if (track?.type == "video") {
+        if (track?.type == 'video') {
           hmsActions.attachVideo(p, <HTMLVideoElement>document.getElementsByClassName('screen-share')[l]).catch((error: any) => {
             return error;
           });
@@ -102,12 +95,56 @@ export class AppComponent {
   }
 
   private renderMessages(messages: any) {
-    console.log('messages - ', messages);
-    AppComponent.prototype.messageList.push(messages);
+    AppComponent.prototype.messageList = messages;
     console.log(AppComponent.prototype.messageList);
   }
 
-  public sendMessage()  {
-    hmsActions.sendBroadcastMessage('hello everyone!');
+  public sendMessage(type: number, peerId?: string, name?: string) {
+    console.log(name);
+    if (type == 0) hmsActions.sendBroadcastMessage('hello everyone!');
+    if (type == 1) hmsActions.sendGroupMessage('hi folks!', ['guest', 'host']);
+    if (type == 2) hmsActions.sendDirectMessage('keep this message a secret!', peerId as string);
+  }
+
+  async toggleVB() {
+    const isVirtualBackgroundEnabled = hmsStore.getState(
+      hmsAll.selectIsLocalVideoPluginPresent(this.virtualBackground.getName())
+    );
+    try {
+
+      if (!isVirtualBackgroundEnabled) {
+        // Recommended value
+        const pluginFrameRate = 15;
+        // add virtual background
+        await hmsActions.addPluginToVideoTrack(this.virtualBackground, pluginFrameRate);
+      } else {
+        // remove virtual background
+        await hmsActions.removePluginFromVideoTrack(this.virtualBackground);
+      }
+      await AppComponent.prototype.renderPeers(AppComponent.prototype.peersList);
+
+    } catch (err) {
+      console.log('virtual background failure - ', isVirtualBackgroundEnabled, err);
+    }
+  }
+
+  async start() {
+    const params = {
+      meetingURL: "https://barbosa.app.100ms.live/meeting/yrf-thq-ptg",
+      record: true
+    };
+    try {
+      await hmsActions.startRTMPOrRecording(params);
+    } catch (err) {
+      console.error("failed to start rtmp/recording", err);
+    }
+  }
+
+  async stop() {
+    try {
+      await hmsActions.stopRTMPAndRecording();
+    } catch (err) {
+      console.error("failed to stop rtmp/recording", err);
+    }
   }
 }
